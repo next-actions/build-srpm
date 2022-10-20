@@ -29,7 +29,7 @@ runs:
         mkdir -p $dir/rpmbuild/SPECS
         mkdir -p $dir/rpmbuild/SRPMS
 
-        echo ::set-output name=path::$dir/rpmbuild
+        echo "path=$dir/rpmbuild" >> $GITHUB_OUTPUT
 
     - name: Move tarball to rpm buildroot
       shell: bash
@@ -48,5 +48,5 @@ runs:
       run: |
         path=`ls ${{ steps.buildroot.outputs.path }}/SRPMS/*.rpm`
         file=`basename $path`
-        echo ::set-output name=path::$path
-        echo ::set-output name=file::$file
+        echo "path=$path" >> $GITHUB_OUTPUT
+        echo "file=$file" >> $GITHUB_OUTPUT
