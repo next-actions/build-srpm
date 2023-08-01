@@ -13,6 +13,8 @@ jobs:
       run: |
         echo "#!/bin/bash"      > test.sh
         echo "echo I am here." >> test.sh
+        echo "testing" > readme.md
+        echo "testing2" > readme2.md
         tar -cvzf action-build-srpm-1.tar.gz --transform "s,^,action-build-srpm-1/," *
     - name: Create spec file
       shell: bash
@@ -26,6 +28,8 @@ jobs:
 
         License:        GPLv3+
         Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+        Source1:        readme.md
+        Source2:        readme2.md
 
         %description
         Test action-build-srpm.
@@ -43,7 +47,17 @@ jobs:
         EOF
 
     - name: Build source rpm
+      id: srpm
       uses: ./
       with:
         tarball: action-build-srpm-1.tar.gz
         specfile: test.spec
+        sourcefiles: |
+          readme.md
+          readme2.md
+
+    - name: Validate source rpm files
+      run: |
+        for file in $(rpm -qlp ${{ steps.srpm.outputs.path }}); do
+          echo $file | grep -e 'test\.spec' -e 'readme\.md' -e 'readme2\.md' -e 'action-build-srpm-1.tar.gz'
+        done

@@ -12,6 +12,10 @@ Path to the tarball. Required.
 
 Path to the spec file. Required.
 
+### `sourcefiles`
+
+List of files to provide as spec file Sources. Optional.
+
 ## Outputs
 
 ### `path`
@@ -31,6 +35,9 @@ Source rpm file name.
   with:
     tarball: package-n-v-r.tar.gz
     specfile: package.spec
+    sourcefiles: |
+      readme.md
+      testconf.example
 
 - name: Upload source rpm as an artifact
   uses: actions/upload-artifact@v2
