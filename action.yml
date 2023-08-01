@@ -7,6 +7,9 @@ inputs:
   specfile:
     description: RPM spec file
     required: true
+  sourcefiles:
+    description: Additional source files
+    required: false
 outputs:
   path:
     description: Path to the created source rpm
@@ -35,6 +38,15 @@ runs:
       shell: bash
       run: |
         cp ${{ inputs.tarball }} ${{ steps.buildroot.outputs.path }}/SOURCES/
+
+    - name: Copy source files to rpm buildroot
+      env:
+        files: ${{ inputs.sourcefiles }}
+      shell: bash
+      run: |
+        for file in $files; do
+          cp $file ${{ steps.buildroot.outputs.path }}/SOURCES/
+        done
 
     - name: Build source rpm
       id: build
