@@ -6,6 +6,9 @@ jobs:
   action:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
     - name: Create mock project tarball
       run: |
         echo "#!/bin/bash"      > test.sh
@@ -38,8 +41,9 @@ jobs:
         %files
         %{_bindir}/test.sh
         EOF
+
     - name: Build source rpm
-      uses: next-actions/build-srpm@master
+      uses: ./
       with:
         tarball: action-build-srpm-1.tar.gz
         specfile: test.spec
