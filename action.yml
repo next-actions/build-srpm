@@ -13,52 +13,12 @@ inputs:
 outputs:
   path:
     description: Path to the created source rpm
-    value: ${{ steps.result.outputs.path }}
   file:
     description: File name to the created source rpm
-    value: ${{ steps.result.outputs.file }}
 runs:
-  using: 'composite'
-  steps:
-    - name: Prepare rpm directory structure
-      id: buildroot
-      shell: bash
-      run: |
-        dir=`mktemp -d`
-
-        mkdir -p $dir/rpmbuild/BUILD
-        mkdir -p $dir/rpmbuild/RPMS
-        mkdir -p $dir/rpmbuild/SOURCES
-        mkdir -p $dir/rpmbuild/SPECS
-        mkdir -p $dir/rpmbuild/SRPMS
-
-        echo "path=$dir/rpmbuild" >> $GITHUB_OUTPUT
-
-    - name: Move tarball to rpm buildroot
-      shell: bash
-      run: |
-        cp ${{ inputs.tarball }} ${{ steps.buildroot.outputs.path }}/SOURCES/
-
-    - name: Copy source files to rpm buildroot
-      env:
-        files: ${{ inputs.sourcefiles }}
-      shell: bash
-      run: |
-        for file in $files; do
-          cp $file ${{ steps.buildroot.outputs.path }}/SOURCES/
-        done
-
-    - name: Build source rpm
-      id: build
-      shell: bash
-      run: |
-        rpmbuild --define "_topdir ${{ steps.buildroot.outputs.path }}" -bs ${{ inputs.specfile }}
-
-    - name: Set output srpm path
-      id: result
-      shell: bash
-      run: |
-        path=`ls ${{ steps.buildroot.outputs.path }}/SRPMS/*.rpm`
-        file=`basename $path`
-        echo "path=$path" >> $GITHUB_OUTPUT
-        echo "file=$file" >> $GITHUB_OUTPUT
+  using: 'docker'
+  image: 'container/Dockerfile'
+  args:
+  - ${{ inputs.tarball }}
+  - ${{ inputs.specfile }}
+  - ${{ inputs.sourcefiles }}
