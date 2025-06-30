@@ -61,6 +61,10 @@ jobs:
 
     - name: Validate source rpm files
       run: |
+        set -e
+        ls -l "${{ steps.srpm.outputs.path }}"
+        rpm -qlp "${{ steps.srpm.outputs.path }}"
+
         for file in $(rpm -qlp ${{ steps.srpm.outputs.path }}); do
           echo $file | grep -e 'test\.spec' -e 'readme\.md' -e 'readme2\.md' -e 'action-build-srpm-1.tar.gz'
         done
