@@ -22,12 +22,12 @@ jobs:
         cat <<EOF > test.spec
         Name:           action-build-srpm
         Version:        1
-        Release:        1%{?dist}
+        Release:        %autorelease
         Summary:        Test action-build-srpm
         URL:            https://github.com/next-actions/action-build-srpm
 
         License:        GPLv3+
-        Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+        Source0:        %{url}/archive/%{version}/%{name}-%{version_no_tilde}.tar.gz
         Source1:        readme.md
         Source2:        readme2.md
 
@@ -44,6 +44,9 @@ jobs:
 
         %files
         %{_bindir}/test.sh
+
+        %changelog
+        %autochangelog
         EOF
 
     - name: Build source rpm
